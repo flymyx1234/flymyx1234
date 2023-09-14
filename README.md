@@ -1,34 +1,74 @@
-import random
+import time
 
-# 参与者列表
-participants = ["参与者1", "参与者2", "参与者3", "参与者4", "参与者5"]
+class Responder:
+    def __init__(self):
+        self.participants = {}
+        self.responses = {}
+        self.question = ""
+        self.is_question_active = False
 
-# 问题列表
-questions = [
-    "问题1：什么是Python的主要用途？",
-    "问题2：Python的创始人是谁？",
-    "问题3：Python中如何定义一个函数？",
-    "问题4：Python中的缩进是什么作用？",
-]
+    def start_question(self, question):
+        self.question = question
+        self.is_question_active = True
+        self.responses = {}
+        print(f"问题: {question}")
 
-# 抢答函数
-def start_quiz():
-    # 随机选择一个问题
-    question = random.choice(questions)
-    print(question)
+    def stop_question(self):
+        self.is_question_active = False
 
-    # 等待参与者回答问题
-    input("按Enter键开始回答...")
-    # 随机选择一个回答者
-    responder = random.choice(participants)
-    print(f"{responder} 抢答成功！\n")
+    def add_participant(self, name):
+        if name not in self.participants:
+            self.participants[name] = time.time()
+            print(f"{name} 已加入抢答")
 
-# 主程序循环
-while True:
-    # 提示是否开始新的一轮
-    response = input("按Enter键开始新一轮抢答，或输入 'q' 退出：")
-    if response.lower() == 'q':
-        break
+    def answer_question(self, name, answer):
+        if self.is_question_active:
+            if name in self.responses:
+                print(f"{name} 已经回答过了！")
+            else:
+                self.responses[name] = answer
+                print(f"{name} 回答: {answer}")
+        else:
+            print("目前没有问题可以回答")
 
-   
+    def display_responses(self):
+        if not self.is_question_active:
+            print("目前没有问题可以回答")
+        else:
+            print("回答情况:")
+            for name, answer in self.responses.items():
+                print(f"{name}: {answer}")
+
+if __name__ == "__main__":
+    responder = Responder()
+
+    while True:
+        print("\n选择操作:")
+        print("1. 开始新问题")
+        print("2. 停止问题")
+        print("3. 加入抢答")
+        print("4. 回答问题")
+        print("5. 显示回答情况")
+        print("6. 退出")
+        choice = input("请输入操作编号: ")
+
+        if choice == "1":
+            question = input("请输入新问题: ")
+            responder.start_question(question)
+        elif choice == "2":
+            responder.stop_question()
+        elif choice == "3":
+            name = input("请输入参与者的名字: ")
+            responder.add_participant(name)
+        elif choice == "4":
+            name = input("请输入回答者的名字: ")
+            answer = input("请输入答案: ")
+            responder.answer_question(name, answer)
+        elif choice == "5":
+            responder.display_responses()
+        elif choice == "6":
+            break
+        else:
+            print("无效的操作，请重新输入。")
+
 
